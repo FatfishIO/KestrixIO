@@ -11,7 +11,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
     { id: 'advisor', label: 'Pipeline & AI' },
     { id: 'scanners', label: 'Scan Ingest' },
     { id: 'assets', label: 'Assets & Teams' },
-    { id: 'audit', label: 'Audit & Docs' },
+    { id: 'audit', label: 'Audit & Intel' },
   ];
 
   return (

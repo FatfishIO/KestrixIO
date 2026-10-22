@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { FindingsConsole } from './components/FindingsConsole';
@@ -11,7 +6,6 @@ import { AiAdvisorDrawer } from './components/AiAdvisorDrawer';
 import { ScanSimulator } from './components/ScanSimulator';
 import { AssetCatalog } from './components/AssetCatalog';
 import { AuditTrail } from './components/AuditTrail';
-import { DocsViewer } from './components/DocsViewer';
 import { PipelineArchitecture } from './components/PipelineArchitecture';
 import { LoginPage, KestrixUserSession } from './components/LoginPage';
 import {
@@ -32,7 +26,7 @@ import {
   Occurrence,
   Vulnerability,
 } from './core/types';
-import { Shield, FileText, Database, History, LogOut, UserCheck } from 'lucide-react';
+import { Shield, Database, History, LogOut, UserCheck } from 'lucide-react';
 
 const SESSION_STORAGE_KEY = 'kestrix_auth_session_v1';
 
@@ -47,7 +41,7 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState<string>('findings');
-  const [auditSubView, setAuditSubView] = useState<'audit' | 'vulns' | 'docs'>('audit');
+  const [auditSubView, setAuditSubView] = useState<'audit' | 'vulns'>('audit');
   const [selectedTeamContext, setSelectedTeamContext] = useState<string>(
     userSession?.teamId || 'all'
   );
@@ -55,15 +49,14 @@ export default function App() {
   const [findings, setFindings] = useState<Finding[]>(INITIAL_FINDINGS);
   const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
   const [teams, setTeams] = useState(INITIAL_TEAMS);
-  const [scans, setScans] = useState<Scan[]>(INITIAL_SCANS);
+  const [, setScans] = useState<Scan[]>(INITIAL_SCANS);
   const [occurrences, setOccurrences] = useState<Occurrence[]>(INITIAL_OCCURRENCES);
   const [vulnerabilities, setVulnerabilities] =
     useState<Vulnerability[]>(INITIAL_VULNERABILITIES);
   const [statusChanges, setStatusChanges] =
     useState<StatusChange[]>(INITIAL_STATUS_CHANGES);
-  const [aiOutputs, setAiOutputs] = useState<AiOutput[]>([]);
+  const [, setAiOutputs] = useState<AiOutput[]>([]);
 
-  // Modals & Drawers
   const [statusModalFinding, setStatusModalFinding] = useState<Finding | null>(null);
   const [aiDrawerFinding, setAiDrawerFinding] = useState<Finding | null>(null);
 
@@ -73,7 +66,7 @@ export default function App() {
     try {
       sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
     } catch {
-      // ignore storage quota errors
+      // ignore
     }
   };
 
@@ -122,12 +115,10 @@ export default function App() {
     refreshFromBackend();
   }, [refreshFromBackend]);
 
-  // Render Login Page if not authenticated
   if (!userSession) {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // Filter client-side as well if team context is selected
   const visibleAssets =
     selectedTeamContext === 'all'
       ? assets
@@ -147,18 +138,6 @@ export default function App() {
 
   const handleRecordAiOutput = (output: AiOutput) => {
     setAiOutputs((prev) => [output, ...prev]);
-  };
-
-  const handleSimulatorUpdate = (
-    newFindings: Finding[],
-    newScans: Scan[],
-    newStatusChanges: StatusChange[],
-    newOccurrences: Occurrence[]
-  ) => {
-    setFindings(newFindings);
-    setScans(newScans);
-    setStatusChanges((prev) => [...newStatusChanges, ...prev]);
-    setOccurrences(newOccurrences);
   };
 
   const handleAddAsset = async (newAsset: Asset) => {
@@ -189,10 +168,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* 3-Zone Top Header */}
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Workspace Context Bar (Authenticated Identity & Team RBAC Scope - Rule #7) */}
       <div className="bg-slate-900/50 border-b border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex flex-wrap items-center gap-4 text-slate-400">
@@ -208,17 +185,17 @@ export default function App() {
 
             <div className="flex items-center space-x-2">
               <Shield className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Team RBAC Scope:</span>
+              <span>Scope:</span>
               <select
                 value={selectedTeamContext}
                 onChange={(e) => setSelectedTeamContext(e.target.value)}
                 disabled={userSession.role !== 'secops_admin'}
                 className="px-2.5 py-1 bg-slate-950 border border-slate-800 rounded text-slate-200 font-medium focus:outline-none focus:border-indigo-500 disabled:opacity-75"
               >
-                <option value="all">Global SecOps (Tất cả Team)</option>
+                <option value="all">Global SecOps (All Teams)</option>
                 {teams.map((team) => (
                   <option key={team.id} value={team.id}>
-                    Team: {team.name} ({team.id})
+                    {team.name} ({team.id})
                   </option>
                 ))}
               </select>
@@ -242,7 +219,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'findings' && (
           <FindingsConsole
@@ -266,10 +242,6 @@ export default function App() {
         {activeTab === 'scanners' && (
           <ScanSimulator
             assets={visibleAssets}
-            findings={visibleFindings}
-            scans={scans}
-            occurrences={occurrences}
-            onUpdateState={handleSimulatorUpdate}
             onRefreshBootstrap={refreshFromBackend}
           />
         )}
@@ -277,15 +249,12 @@ export default function App() {
         {activeTab === 'advisor' && (
           <PipelineArchitecture
             findings={visibleFindings}
-            assets={visibleAssets}
-            aiOutputs={aiOutputs}
             onOpenAiAdvisor={(f) => setAiDrawerFinding(f)}
           />
         )}
 
         {activeTab === 'audit' && (
-          <div className="space-y-5">
-            {/* Sub-navigation for Audit, Vulnerability Cache, and Architecture Docs */}
+          <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
               <button
                 onClick={() => setAuditSubView('audit')}
@@ -296,7 +265,7 @@ export default function App() {
                 }`}
               >
                 <History className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Nhật ký StatusChange ({statusChanges.length})</span>
+                <span>StatusChange Log ({statusChanges.length})</span>
               </button>
 
               <button
@@ -308,19 +277,7 @@ export default function App() {
                 }`}
               >
                 <Database className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Vulnerability Cache: OSV / CVE / KEV / EPSS ({vulnerabilities.length})</span>
-              </button>
-
-              <button
-                onClick={() => setAuditSubView('docs')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 cursor-pointer transition-colors ${
-                  auditSubView === 'docs'
-                    ? 'bg-slate-800 text-white'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Tài liệu Thiết kế (docs/*.md & OpenAPI)</span>
+                <span>Vulnerability Cache ({vulnerabilities.length})</span>
               </button>
             </div>
 
@@ -330,22 +287,14 @@ export default function App() {
 
             {auditSubView === 'vulns' && (
               <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-800">
-                  <h3 className="text-sm font-semibold text-slate-100">
-                    Bảng Vulnerability Cache (OSV / NVD CVE / CISA KEV / FIRST EPSS)
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Dữ liệu làm giàu xác định (Deterministic Enrichment) phục vụ mô hình chấm điểm rủi ro CARE.
-                  </p>
-                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
                       <tr className="border-b border-slate-800 bg-slate-950/60 text-slate-400 uppercase text-[11px]">
-                        <th className="py-3 px-4">Mã Định Danh (PK)</th>
+                        <th className="py-3 px-4">ID</th>
                         <th className="py-3 px-4">Aliases</th>
                         <th className="py-3 px-4">CVSS v3.1</th>
-                        <th className="py-3 px-4">EPSS (Xác suất)</th>
+                        <th className="py-3 px-4">EPSS</th>
                         <th className="py-3 px-4">CISA KEV</th>
                         <th className="py-3 px-4">SSVC / Fixed Versions</th>
                       </tr>
@@ -370,7 +319,7 @@ export default function App() {
                           </td>
                           <td className="py-3 px-4 font-mono">
                             {v.kev ? (
-                              <span className="text-rose-400 font-semibold">IN KEV (+15)</span>
+                              <span className="text-rose-400 font-semibold">IN KEV</span>
                             ) : (
                               <span className="text-slate-500">No</span>
                             )}
@@ -385,13 +334,10 @@ export default function App() {
                 </div>
               </div>
             )}
-
-            {auditSubView === 'docs' && <DocsViewer />}
           </div>
         )}
       </main>
 
-      {/* Human Status Triage Modal */}
       {statusModalFinding && (
         <StatusChangeModal
           finding={statusModalFinding}
@@ -402,7 +348,6 @@ export default function App() {
         />
       )}
 
-      {/* Guardrailed AI Advisor Drawer */}
       {aiDrawerFinding && (
         <AiAdvisorDrawer
           finding={aiDrawerFinding}

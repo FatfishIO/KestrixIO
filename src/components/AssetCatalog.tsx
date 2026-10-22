@@ -47,13 +47,10 @@ export const AssetCatalog: React.FC<AssetCatalogProps> = ({ assets, teams, onAdd
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-slate-100 flex items-center space-x-2">
-            <Layers className="w-5 h-5 text-indigo-400" />
-            <span>Danh mục Tài sản & Đội ngũ Sở hữu (Asset & Team Catalog)</span>
+          <h2 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
+            <Layers className="w-4 h-4 text-indigo-400" />
+            <span>Assets & Teams</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Ngữ cảnh tài sản trực tiếp quyết định trọng số và mức rủi ro (P1 - P4) theo cây quyết định SSVC.
-          </p>
         </div>
 
         <button

@@ -102,15 +102,7 @@ export const AiAdvisorDrawer: React.FC<AiAdvisorDrawerProps> = ({
             <Sparkles className="w-4 h-4 text-indigo-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
-              <span>AI Security Advisor</span>
-              <span className="text-[11px] text-indigo-400 font-mono">
-                packages/llm-gateway
-              </span>
-            </h3>
-            <p className="text-xs text-slate-400">
-              Facts từ Scanner & OSV/CVE/KEV · AI chỉ giải thích & đề xuất · Con người quyết định
-            </p>
+            <h3 className="text-sm font-bold text-slate-100">AI Security Advisor</h3>
           </div>
         </div>
         <button
@@ -119,18 +111,6 @@ export const AiAdvisorDrawer: React.FC<AiAdvisorDrawerProps> = ({
         >
           <X className="w-5 h-5" />
         </button>
-      </div>
-
-      {/* Security Guardrails Strip */}
-      <div className="bg-slate-950 px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-        <div className="flex items-center space-x-1.5 text-emerald-400">
-          <Lock className="w-3 h-3" />
-          <span>Rule #1 & #4: Redact Secret trước khi gửi LLM</span>
-        </div>
-        <div className="flex items-center space-x-1.5 text-indigo-400">
-          <FileCheck className="w-3 h-3" />
-          <span>Rule #5: Zod Schema Validation</span>
-        </div>
       </div>
 
       {/* Finding Subject Preview */}
@@ -354,13 +334,6 @@ export const AiAdvisorDrawer: React.FC<AiAdvisorDrawerProps> = ({
                   <div className="font-mono text-slate-400 text-[11px] bg-slate-900 p-2 rounded">
                     {resultData.evidence}
                   </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-indigo-950/40 border border-indigo-900/60 text-indigo-300">
-                  <div className="font-semibold mb-1">Quy tắc Guardrail:</div>
-                  <p className="text-[11px] leading-relaxed">
-                    AI không được phép tự động đóng finding. Chuyên viên bảo mật cần nhấn "Đổi trạng thái" để xác nhận quyết định này.
-                  </p>
                 </div>
               </div>
             )}

@@ -13,13 +13,10 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ statusChanges, findings 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-base font-bold text-slate-100 flex items-center space-x-2">
-          <History className="w-5 h-5 text-indigo-400" />
-          <span>Nhật Ký Kiểm Toán Bất Biến (Audit Trail & Status Governance)</span>
+        <h2 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
+          <History className="w-4 h-4 text-indigo-400" />
+          <span>Audit Trail</span>
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Mọi quyết định phân loại, đóng lỗi, chấp nhận rủi ro hoặc tự động auto-fixed đều được lưu vết vĩnh viễn (STATE_MACHINE.md & ERD.md).
-        </p>
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">

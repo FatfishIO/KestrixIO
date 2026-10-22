@@ -175,14 +175,6 @@ export const StatusChangeModal: React.FC<StatusChangeModalProps> = ({
             </select>
           </div>
 
-          {/* System Guard Notice */}
-          <div className="p-3 rounded-lg bg-indigo-950/40 border border-indigo-900/50 flex items-start space-x-2.5 text-xs text-indigo-300">
-            <Lock className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-semibold text-indigo-200">Quy tắc Vòng đời (STATE_MACHINE.md):</span> Trạng thái <code className="bg-indigo-900/80 px-1 py-0.5 rounded text-indigo-100">fixed</code> do hệ thống tự động gắn khi lần quét tiếp theo của scanner không còn phát hiện finding này.
-            </div>
-          </div>
-
           {toStatus === 'risk_accepted' && (
             <div className="p-3 bg-amber-950/30 border border-amber-900/50 rounded-lg space-y-2">
               <label className="block text-xs font-semibold text-amber-300">

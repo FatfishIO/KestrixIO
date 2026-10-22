@@ -100,53 +100,33 @@ export const FindingsConsole: React.FC<FindingsConsoleProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* KPI Metric Strip — Single-elevation flat surface with tabular numerals */}
+      {/* KPI Metric Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 border border-slate-800 rounded-xl bg-slate-900 divide-y sm:divide-y-0 sm:divide-x divide-slate-800">
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-400">
-            P1 Critical (SLA 7 ngày)
-          </div>
-          <div className="mt-2 text-2xl font-bold text-red-400 font-mono tabular-nums">
+        <div className="p-4">
+          <div className="text-xs font-medium text-slate-400">P1 Critical (7d SLA)</div>
+          <div className="mt-1.5 text-2xl font-bold text-red-400 font-mono tabular-nums">
             {p1Count}
           </div>
-          <div className="text-xs text-slate-500 mt-1">
-            Có trong KEV hoặc lộ trực tiếp Internet
-          </div>
         </div>
 
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-400">
-            P2 High (SLA 30 ngày)
-          </div>
-          <div className="mt-2 text-2xl font-bold text-amber-400 font-mono tabular-nums">
+        <div className="p-4">
+          <div className="text-xs font-medium text-slate-400">P2 High (30d SLA)</div>
+          <div className="mt-1.5 text-2xl font-bold text-amber-400 font-mono tabular-nums">
             {p2Count}
           </div>
-          <div className="text-xs text-slate-500 mt-1">
-            EPSS &gt; 0.1 hoặc Production Flaw
-          </div>
         </div>
 
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-400">
-            Auto-Fixed bởi Scanner
-          </div>
-          <div className="mt-2 text-2xl font-bold text-emerald-400 font-mono tabular-nums">
+        <div className="p-4">
+          <div className="text-xs font-medium text-slate-400">Fixed</div>
+          <div className="mt-1.5 text-2xl font-bold text-emerald-400 font-mono tabular-nums">
             {fixedCount}
           </div>
-          <div className="text-xs text-slate-500 mt-1">
-            Hệ thống tự đóng khi scan sau không thấy
-          </div>
         </div>
 
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-400">
-            Tái xuất hiện (Reopened)
-          </div>
-          <div className="mt-2 text-2xl font-bold text-indigo-400 font-mono tabular-nums">
+        <div className="p-4">
+          <div className="text-xs font-medium text-slate-400">Reopened</div>
+          <div className="mt-1.5 text-2xl font-bold text-indigo-400 font-mono tabular-nums">
             {reopenedCount}
-          </div>
-          <div className="text-xs text-slate-500 mt-1">
-            Quay về triaged khi xuất hiện lại
           </div>
         </div>
       </div>
@@ -413,19 +393,12 @@ export const FindingsConsole: React.FC<FindingsConsoleProps> = ({
                                 )}
 
                                 {finding.type === 'secret' && (
-                                  <div className="pt-2 space-y-1 text-slate-300">
-                                    <div className="font-semibold text-amber-300">
-                                      Tuân thủ Quy tắc Bảo mật #1 (Gitleaks Secret):
+                                  <div className="pt-2 space-y-1 text-slate-300 font-mono">
+                                    <div className="text-amber-300">
+                                      Masked: {finding.secretMasked}
                                     </div>
-                                    <div>
-                                      Giá trị thô đã bị hủy ngay lập tức. Chỉ lưu bản che{' '}
-                                      <code className="font-mono text-amber-300">
-                                        {finding.secretMasked}
-                                      </code>{' '}
-                                      và băm SHA-256:
-                                    </div>
-                                    <div className="font-mono text-slate-400 break-all">
-                                      {finding.secretHash}
+                                    <div className="text-slate-400 break-all">
+                                      SHA-256: {finding.secretHash}
                                     </div>
                                   </div>
                                 )}
