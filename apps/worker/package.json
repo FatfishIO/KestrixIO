@@ -1,0 +1,15 @@
+{
+  "name": "@kestrix/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@kestrix/core": "workspace:*",
+    "@kestrix/db": "workspace:*",
+    "@kestrix/llm-gateway": "workspace:*"
+  }
+}

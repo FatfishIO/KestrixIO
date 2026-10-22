@@ -1,0 +1,6 @@
+{
+  "summary":  "Kế hoạch rà soát bảo mật và ẩn danh hóa toàn bộ dữ liệu định danh cá nhân (xóa tên Minh Hoàng và các tên riêng, đổi sang Global SecOps / Test User) cũng như làm sạch toàn bộ chuỗi mẫu trong mã nguồn trước khi đẩy lên GitHub.",
+  "updatedAt":  "2026-10-22T09:09:24.035626140Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

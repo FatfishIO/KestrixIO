@@ -1,0 +1,16 @@
+{
+  "name": "@kestrix/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "db:generate": "drizzle-kit generate --config=./drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config=./drizzle.config.ts"
+  },
+  "dependencies": {
+    "@kestrix/core": "workspace:*",
+    "drizzle-orm": "^0.45.4"
+  }
+}

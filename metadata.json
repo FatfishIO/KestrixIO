@@ -1,0 +1,6 @@
+{
+  "name": "Kestrix — AI-Augmented Vulnerability Management",
+  "description": "Hệ thống quản lý lỗ hổng mã nguồn (SAST, Secret, Dependency) với khử trùng lặp fingerprint, chấm điểm rủi ro theo ngữ cảnh và AI gợi ý có kiểm soát.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

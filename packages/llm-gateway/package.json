@@ -1,0 +1,13 @@
+{
+  "name": "@kestrix/llm-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@kestrix/core": "workspace:*",
+    "zod": "^4.3.6"
+  }
+}

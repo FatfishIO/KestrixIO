@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: Kestrix Vulnerability Management API
+  version: 1.0.0
+  description: >
+    API quản lý lỗ hổng mã nguồn Kestrix. Hỗ trợ ingestion đa scanner, khử trùng lặp
+    deterministic, quản lý vòng đời, phân loại rủi ro SSVC/EPSS và AI Advisory.
+servers:
+  - url: /api/v1
+    description: Current Environment API Server
+
+paths:
+  /healthz:
+    get:
+      summary: Liveness and readiness check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "ok" }
+                  timestamp: { type: string, format: date-time }
+
+  /assets:
+    get:
+      summary: Lấy danh sách asset theo quyền team
+      parameters:
+        - name: team_id
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Danh sách asset
+    post:
+      summary: Tạo asset mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [team_id, name, repo_url, criticality, environment, data_class]
+              properties:
+                team_id: { type: string, format: uuid }
+                name: { type: string }
+                repo_url: { type: string }
+                criticality: { type: integer, minimum: 1, maximum: 4 }
+                internet_facing: { type: boolean, default: false }
+                environment: { type: string, enum: [production, staging, development] }
+                data_class: { type: string, enum: [pci_dss, pii, internal, public] }
+      responses:
+        '201':
+          description: Asset created
+
+  /scans/ingest:
+    post:
+      summary: Ingest kết quả scan từ CI/CD hoặc Worker
+      description: Nhận báo cáo SARIF, Gitleaks JSON, hoặc OSV-Scanner JSON để khử trùng lặp và tính điểm.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [asset_id, commit_sha, scanner, scanner_version, rules_version, findings]
+              properties:
+                asset_id: { type: string, format: uuid }
+                commit_sha: { type: string }
+                scanner: { type: string, enum: [semgrep, gitleaks, osv-scanner] }
+                scanner_version: { type: string }
+                rules_version: { type: string }
+                findings:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Ingestion result với thống kê created, updated, auto-fixed.
+
+  /findings:
+    get:
+      summary: Danh sách findings với bộ lọc rủi ro, trạng thái, SLA
+      parameters:
+        - name: asset_id
+          in: query
+          schema: { type: string, format: uuid }
+        - name: status
+          in: query
+          schema: { type: string, enum: [new, triaged, in_progress, fixed, false_positive, risk_accepted] }
+        - name: risk_level
+          in: query
+          schema: { type: string, enum: [P1, P2, P3, P4] }
+        - name: type
+          in: query
+          schema: { type: string, enum: [sast, secret, dependency] }
+      responses:
+        '200':
+          description: Danh sách findings thỏa mãn
+
+  /findings/{id}/status:
+    patch:
+      summary: Thay đổi trạng thái finding (chỉ con người thực hiện)
+      description: Ghi lại audit log vào status_changes. Cấm LLM tự đổi trạng thái.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to_status, actor, reason]
+              properties:
+                to_status: { type: string, enum: [triaged, in_progress, false_positive, risk_accepted] }
+                actor: { type: string }
+                reason: { type: string }
+                expires_at: { type: string, format: date-time, nullable: true }
+      responses:
+        '200':
+          description: Cập nhật thành công
+
+  /findings/{id}/ai/{kind}:
+    post:
+      summary: Yêu cầu AI Advisor phân tích finding qua LLM Gateway
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: kind
+          in: path
+          required: true
+          schema: { type: string, enum: [explain, triage, cvss, patch, advisory] }
+      responses:
+        '200':
+          description: Trả về kết quả AI đã qua Zod schema validation

@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kestrix-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kestrix
+      POSTGRES_PASSWORD: PLACEHOLDER_DB_PASS
+      POSTGRES_DB: kestrix
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U kestrix -d kestrix']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    container_name: kestrix-valkey
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: ['valkey-server', '--appendonly', 'yes']
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: kestrix-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: kestrix_minio
+      MINIO_ROOT_PASSWORD: PLACEHOLDER_MINIO_PASS
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  valkey_data:
+  minio_data:
